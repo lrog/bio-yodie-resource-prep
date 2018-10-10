@@ -17,6 +17,8 @@
 #
 # G. Gorrell, 26 September 2016
 
+set -e
+
 PRG="$0"
 CURDIR="`pwd`"
 # need this for relative symlinks
@@ -53,23 +55,23 @@ umlsloc=$SRC/umls/
 echo "Updating the UMLS location in h2_tables script to $umlsloc."
 
 cp $ROOTDIR/sql/h2_tables_master.sql $ROOTDIR/sql/h2_tables_autogen.sql
-sed -i "s|###UMLSLOC|$umlsloc|g" $ROOTDIR/sql/h2_tables_autogen.sql
+gsed -i "s|###UMLSLOC|$umlsloc|g" $ROOTDIR/sql/h2_tables_autogen.sql
 
 echo "Updating the UMLS version in h2_tables script to 2015AB."
 
-sed -i 's/###UMLSVERSION/2015AB/g' $ROOTDIR/sql/h2_tables_autogen.sql
+gsed -i 's/###UMLSVERSION/2015AB/g' $ROOTDIR/sql/h2_tables_autogen.sql
 
 # If $LANGS is set, use it to change a parameter in the SQL script sql/h2_tables_autogen.sql
 # that will be used as a filter, to keep only the lines in the MRCONSO table with strings in
 # the languages specified
 
-LANGLIST=`echo ${LANGS:-"en"} | sed "s/^/(\'/g" | sed "s/ /\',\'/g" | sed "s/$/\')/g"`
+LANGLIST=`echo ${LANGS:-"en"} | gsed "s/^/(\'/g" | gsed "s/ /\',\'/g" | gsed "s/$/\')/g"`
 
 echo -n "Updating the language filter in h2_tables script to "
 echo -n ${LANGLIST}
 echo "."
 
-sed -i 's/###LANGLIST/'$LANGLIST'/g' $ROOTDIR/sql/h2_tables_autogen.sql
+gsed -i 's/###LANGLIST/'$LANGLIST'/g' $ROOTDIR/sql/h2_tables_autogen.sql
 
 echo "Create and load tables ... `/bin/date`"
 #java -cp $H2_JAR_LOC org.h2.tools.RunScript -url jdbc:h2:$DB;MV_STORE=FALSE -script $ROOTDIR/sql/h2_tables_autogen.sql -continueOnError -user sa

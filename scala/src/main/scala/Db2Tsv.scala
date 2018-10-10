@@ -34,7 +34,7 @@ object Db2Tsv {
         }
       }
 
-    val conn = utils.JdbcConnection.getConnection(dbname,true)
+    val conn = utils.JdbcConnection.getConnection(dbname,false)
     
     val selectSt = conn.prepareStatement(query)
 

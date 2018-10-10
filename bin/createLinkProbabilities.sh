@@ -18,6 +18,7 @@ ROOTDIR=`cd "$SCRIPTDIR"/..; pwd -P`
 
 . config/getvars.sh
 
+set -e
 set -x
 set -v
 

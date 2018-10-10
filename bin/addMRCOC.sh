@@ -48,7 +48,7 @@ fi
 cp $ROOTDIR/sql/addMRCOC_master.sql $ROOTDIR/sql/addMRCOC_autogen.sql
 
 #Putting the desired STYCLASSES in sql/addYODIETables_autogen.sql (line #32)
-sed -i 's:###SRCS:'$SRC':g' $ROOTDIR/sql/addMRCOC_autogen.sql
+gsed -i 's:###SRCS:'$SRC':g' $ROOTDIR/sql/addMRCOC_autogen.sql
 
 echo "Adding table with MeSH terms co-occurrence frequencies in MEDLINE abstracts."
 

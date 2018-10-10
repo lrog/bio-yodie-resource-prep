@@ -17,6 +17,8 @@
 #
 # G. Gorrell, 26 September 2016
 
+set -e
+
 PRG="$0"
 CURDIR="`pwd`"
 # need this for relative symlinks
@@ -36,7 +38,7 @@ ROOTDIR=`cd "$SCRIPTDIR"/..; pwd -P`
 . $ROOTDIR/config/getvars.sh
 
 DATE=$(date +%Y%m%d-%H%M%S)
-LNGS=$(echo ${LANGS} | sed s/\ /-/)
+LNGS=$(echo ${LANGS} | gsed 's/\ /-/')
 FILENAME=benchmarking-${LNGS}-${DATE}.txt
 echo "Saving benchmarking times to $FILENAME"
 echo "Beginning to export resources for $LANGS." > $FILENAME

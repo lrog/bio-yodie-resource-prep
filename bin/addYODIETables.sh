@@ -37,7 +37,7 @@ ROOTDIR=`cd "$SCRIPTDIR"/..; pwd -P`
 
 H2_JAR_LOC="$ROOTDIR/scala/lib/h2-*.jar"
 
-STYCLASSESLIST=`echo ${STYCLASSES:-"KCO"} | sed "s/^/(\'/g" | sed "s/ /\',\'/g" | sed "s/$/\')/g"`
+STYCLASSESLIST=`echo ${STYCLASSES:-"KCO"} | gsed "s/^/(\'/g" | gsed "s/ /\',\'/g" | gsed "s/$/\')/g"`
 
 if [ -f $ROOTDIR/tmpdata/styclasses.csv ]
  then
@@ -63,16 +63,16 @@ fi
 cp $ROOTDIR/sql/addYODIETables_master.sql $ROOTDIR/sql/addYODIETables_autogen.sql
 
 #Putting the correct file path for that table in sql/addYODIETables_autogen.sql (line #19)
-sed -i 's:###ROOTDIR:'$ROOTDIR':g' $ROOTDIR/sql/addYODIETables_autogen.sql
+gsed -i 's:###ROOTDIR:'$ROOTDIR':g' $ROOTDIR/sql/addYODIETables_autogen.sql
 
 #Putting the desired STYCLASSES in sql/addYODIETables_autogen.sql (line #32)
-sed -i 's/###SELECTEDSTYCLASSES/'${STYCLASSESLIST}'/g' $ROOTDIR/sql/addYODIETables_autogen.sql
+gsed -i 's/###SELECTEDSTYCLASSES/'${STYCLASSESLIST}'/g' $ROOTDIR/sql/addYODIETables_autogen.sql
 
 #Putting in the right location for SRC
-sed -i 's|###SRCS|'${SRC}'|g' $ROOTDIR/sql/addYODIETables_autogen.sql
+gsed -i 's|###SRCS|'${SRC}'|g' $ROOTDIR/sql/addYODIETables_autogen.sql
 
 #Putting in the right location for the TMPDATA
-sed -i 's|###TMPDATA|'${TMP}'|g' $ROOTDIR/sql/addYODIETables_autogen.sql
+gsed -i 's|###TMPDATA|'${TMP}'|g' $ROOTDIR/sql/addYODIETables_autogen.sql
 
 echo "Adding table with MeSH frequencies, and a restricted set of semantic types (STY)."
 

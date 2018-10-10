@@ -84,7 +84,7 @@ STYCLASSES='KCX'
 
 if [ -d "${ROOT}"/srcs ]  
 then 
-  srcexp=$(readlink -f "${ROOT}"/srcs)
+  srcexp=$(greadlink -f "${ROOT}"/srcs)
   export SRC=$srcexp
 else
   echo no directory or link $ROOT/srcs found
@@ -95,7 +95,7 @@ fi
 
 if [ -d "${ROOT}"/tmpdata ]  
 then
-  tmpexp=$(readlink -f "${ROOT}"/tmpdata)
+  tmpexp=$(greadlink -f "${ROOT}"/tmpdata)
   export TMP=$tmpexp
 else
   echo no directory or link $ROOT/tmpdata found
@@ -106,7 +106,7 @@ fi
 
 if [ -d "${ROOT}"/output ]  
 then 
-  tmpout=$(readlink -f "${ROOT}"/output)
+  tmpout=$(greadlink -f "${ROOT}"/output)
   export OUT=$tmpout
 else
   echo no directory or link $ROOT/output found
@@ -118,7 +118,7 @@ fi
 
 if [ -d "${ROOT}"/databases ]  
 then 
-  tmproot=$(readlink -f "${ROOT}"/databases)
+  tmproot=$(greadlink -f "${ROOT}"/databases)
   export WORK=$tmproot
   export DB=$tmproot/umls
 else

@@ -17,6 +17,8 @@
 #
 # G. Gorrell, 26 September 2016
 
+set -e
+
 PRG="$0"
 CURDIR="`pwd`"
 # need this for relative symlinks
@@ -42,7 +44,7 @@ ROOTDIR=`cd "$SCRIPTDIR"/..; pwd -P`
 
 . config/getvars.sh
 
-LANGLABELS=`echo ${LANGS:-"en"} | sed "s/ /+/g"`
+LANGLABELS=`echo ${LANGS:-"en"} | gsed "s/ /+/g"`
 LABELDBNAME="labelinfo"${LANGS:+"-"${LANGLABELS}}
 
 set -x
@@ -67,14 +69,14 @@ gzip > ${TMP}/${LANGLABELS}/labelInfoFull.tsv.gz
 #./bin/runScala.sh ExecuteSql ${DB} sql/InsertLabelInfoFull.sql
 
 ## 
-zcat ${TMP}/${LANGLABELS}/labelInfoFull.tsv.gz | \
+gunzip -c ${TMP}/${LANGLABELS}/labelInfoFull.tsv.gz | \
 $ROOTDIR/bin/runScala.sh Tsv2JsonTsv 1 label inst STY TUI PREF LABELVOCABS CUIVOCABS scCRISLabelCUIFreq scCRISLabelCUINorm scCRISCUIFreq scCRISCUINorm scPageRank| \
 gzip > ${TMP}/${LANGLABELS}/labelInfoJson.tsv.gz
 
 $ROOTDIR/bin/runScala.sh ExecuteSql ${OUT}/databases/${LABELDBNAME} sql/CreateLabelInfo.sql
 
 ## only import the JSON infos that are less than 65536 characters long for now
-zcat ${TMP}/${LANGLABELS}/labelInfoJson.tsv.gz | \
+gunzip -c ${TMP}/${LANGLABELS}/labelInfoJson.tsv.gz | \
 $ROOTDIR/bin/runScala.sh TsvGrep -v 1 '.{65536,}' | \
 $ROOTDIR/bin/runScala.sh Tsv2Db ${OUT}/databases/${LABELDBNAME} sql/ImportLabelInfo.sql -
 

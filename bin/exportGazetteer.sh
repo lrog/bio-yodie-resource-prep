@@ -17,6 +17,8 @@
 #
 # G. Gorrell, 26 September 2016
 
+set -e
+
 PRG="$0"
 CURDIR="`pwd`"
 # need this for relative symlinks
@@ -37,7 +39,7 @@ ROOTDIR=`cd "$SCRIPTDIR"/..; pwd -P`
 
 H2_JAR_LOC="$ROOTDIR/scala/lib/h2-*.jar"
 
-STYCLASSESLIST=`echo ${STYCLASSES:-"BMH"} | sed "s/^/(\'/g" | sed "s/ /\',\'/g" | sed "s/$/\')/g"`
+STYCLASSESLIST=`echo ${STYCLASSES:-"BMH"} | gsed "s/^/(\'/g" | gsed "s/ /\',\'/g" | gsed "s/$/\')/g"`
 
 for LANG in $LANGS ; do
 
@@ -66,27 +68,28 @@ for LANG in $LANGS ; do
 
  # Filter the MRCONSO table to keep only semantic types belonging to the chosen subset(s):
  # put the desired STYCLASSES in sql/get-labels-${LANG}_autogen.sql (line #7)
- sed -i 's/###SELECTEDSTYCLASSES/'${STYCLASSESLIST}'/g' $ROOTDIR/sql/get-labels-${LANG}_autogen.sql
+ gsed -i 's/###SELECTEDSTYCLASSES/'${STYCLASSESLIST}'/g' $ROOTDIR/sql/get-labels-${LANG}_autogen.sql
 
  # Filter the MRCONSO table to keep only strings in ${LANG}:
  # put the correct language filter in sql/get-labels-${LANG}_autogen.sql (line #8)
- LANGLIST=`echo ${LANG:-"en"} | sed "s/^/(\'/g" | sed "s/$/\')/g"`
+ LANGLIST=`echo ${LANG:-"en"} | gsed "s/^/(\'/g" | gsed "s/$/\')/g"`
 
  echo -n "Updating the language filter in the get-labels SQL script to "
  echo -n ${LANGLIST}
  echo "."
 
- sed -i 's/###LANGLIST/'$LANGLIST'/g' $ROOTDIR/sql/get-labels-${LANG}_autogen.sql
+ gsed -i 's/###LANGLIST/'$LANGLIST'/g' $ROOTDIR/sql/get-labels-${LANG}_autogen.sql
 
  echo "Extracting the "${LANGNAMES[${LANG}]}" label list from the database ..."
 
+ echo "Running: $ROOTDIR/bin/runScala.sh Db2Tsv ${DB} $ROOTDIR/sql/get-labels-${LANG}_autogen.sql > ${OUT}/${LANG}/gazetteer-${LANG}-bio/labels.lst"
  #java -cp $H2_JAR_LOC org.h2.tools.RunScript -url jdbc:h2:$DB;MV_STORE=FALSE -script $ROOTDIR/sql/get-labels.sql -user sa -showResults > ${OUT}/gazetteer-en-bio/labels.lst
  $ROOTDIR/bin/runScala.sh Db2Tsv ${DB} $ROOTDIR/sql/get-labels-${LANG}_autogen.sql > ${OUT}/${LANG}/gazetteer-${LANG}-bio/labels.lst
 
- sed '/\s/d' ${OUT}/${LANG}/gazetteer-${LANG}-bio/labels.lst | grep '[a-zA-Z][A-Z]' >${OUT}/${LANG}/gazetteer-${LANG}-bio/cased-labels.lst
+ gsed '/\s/d' ${OUT}/${LANG}/gazetteer-${LANG}-bio/labels.lst | grep '[a-zA-Z][A-Z]' >${OUT}/${LANG}/gazetteer-${LANG}-bio/cased-labels.lst
 
  grep ' ' ${OUT}/${LANG}/gazetteer-${LANG}-bio/labels.lst >${OUT}/${LANG}/gazetteer-${LANG}-bio/uncased-labels.lst
- sed '/[a-zA-Z][A-Z]/d' ${OUT}/${LANG}/gazetteer-${LANG}-bio/labels.lst | sed '/\s/d' >>${OUT}/${LANG}/gazetteer-${LANG}-bio/uncased-labels.lst
+ gsed '/[a-zA-Z][A-Z]/d' ${OUT}/${LANG}/gazetteer-${LANG}-bio/labels.lst | gsed '/\s/d' >>${OUT}/${LANG}/gazetteer-${LANG}-bio/uncased-labels.lst
 
  echo "Done!"
 
@@ -100,8 +103,8 @@ for LANG in $LANGS ; do
 
  #$ROOTDIR/bin/createCache.sh ${OUT}/${LANG}/gazetteer-${LANG}-bio/cased-labels.def false en-US
  #$ROOTDIR/bin/createCache.sh ${OUT}/${LANG}/gazetteer-${LANG}-bio/uncased-labels.def false en-US
- rm ${OUT}/${LANG}/gazetteer-${LANG}-bio/cased-labels.gazbin
- rm ${OUT}/${LANG}/gazetteer-${LANG}-bio/uncased-labels.gazbin
+ rm -rf ${OUT}/${LANG}/gazetteer-${LANG}-bio/cased-labels.gazbin
+ rm -rf ${OUT}/${LANG}/gazetteer-${LANG}-bio/uncased-labels.gazbin
 
  echo "Finished preparing the "${LANGNAMES[${LANG}]}" gazetteer!"
 

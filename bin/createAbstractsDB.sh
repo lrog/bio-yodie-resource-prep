@@ -35,7 +35,7 @@ ROOTDIR=`cd "$SCRIPTDIR"/..; pwd -P`
 
 . config/getvars.sh
 
-LANGLABELS=`echo ${LANGS:-"en"} | sed "s/ /+/g"`
+LANGLABELS=`echo ${LANGS:-"en"} | gsed "s/ /+/g"`
 ABSTRACTSDBNAME="abstracts"${LANGS:+"-"${LANGLABELS}}
 
 if ! [ -d ${TMP}/${LANGLABELS} ]
